@@ -1,0 +1,6 @@
+javac -classpath ../lib-prj/coolserver.jar CalcServer.java
+
+if [ $? -eq 0 ]; then
+    echo "Starting Server"
+    java -classpath .:../lib-prj/coolserver.jar CalcServer
+fi
