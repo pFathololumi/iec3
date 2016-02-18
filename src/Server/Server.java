@@ -19,11 +19,17 @@ public class Server {
 		
 		HttpServer server = null;
 		try {
-			server = HttpServer.create(new InetSocketAddress(9092), 0);
+			server = HttpServer.create(new InetSocketAddress(9091), 0);
+			
+			// add admin
+			Server.customers.put(1, new Customer(1, "admin", "admin"));
 			
 			server.createContext("/customer/add", new AddCustomer());
 			server.createContext("/customer/deposit", new DepositHandler());
 			server.createContext("/customer/withdraw", new WithdrawHandler());
+			server.createContext("/order/sell", new SellOrder());
+			server.createContext("/order/buy", new BuyOrder());
+			
 			server.start();
 		} catch (IOException e) {
 			System.out.println("Error Configuring Server");
