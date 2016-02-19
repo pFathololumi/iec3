@@ -50,6 +50,13 @@ public class StockMarket {
                 addOrUpdateInstrumentByAdmin(out,symbol,offer);
             else{
                 Instrument instrument = loadVerifiedParameters(offer,symbol);
+                
+                Customer customer = customers.get(offer.getID());
+                if(!customer.hasEnoughStock(symbol, offer)){
+                	out.println("Not enough share");
+                	return;
+                }
+                
                 instrument.executeSellingByType(out,offer);
             }
 
@@ -65,6 +72,12 @@ public class StockMarket {
                 deleteOrUpdateInstrumentByAdmin(out,symbol,offer);
             else {
                 Instrument instrument = loadVerifiedParameters(offer, symbol);
+                
+                Customer customer = customers.get(offer.getID());
+                if(!customer.hasEnoughMoney(offer.getPrice())){
+                	out.println("Not enough money");
+                	return;
+                }
                 instrument.executeBuyingByType(out, offer);
             }
         } catch (DataIllegalException e) {
@@ -74,18 +87,33 @@ public class StockMarket {
     }
 
     private void addOrUpdateInstrumentByAdmin(PrintWriter out,String symbol,Offering offer) {
-        throw new RuntimeException("No Such Method");
+    	boolean flag = false;
+    	for(Instrument i : instruments){
+			if(i.symbolIsMatched(symbol)){
+				i.changeQuantity("add", offer.getQuantity());
+				flag = true;
+				break;
+			}
+		}
+    	if(!flag)
+    		instruments.add(new Instrument(symbol, offer.getQuantity()));
     }
     private void deleteOrUpdateInstrumentByAdmin(PrintWriter out,String symbol,Offering offer) {
-        throw new RuntimeException("No Such Method");
+    	for(Instrument i : instruments){
+			if(i.symbolIsMatched(symbol)){
+				i.changeQuantity("delete", offer.getQuantity());
+				return;
+			}
+		}
     }
 
     private Instrument loadVerifiedParameters(Offering offer, String symbol) throws DataIllegalException {
         Instrument instrument=null;
         if(!customerIsRegistered(offer))
-            throw new DataIllegalException("Unknown id");
+            throw new DataIllegalException("Unknown user id");
         if((instrument= getSymbol(symbol))==null)
-            throw new DataIllegalException("Unknown instrument");
+            throw new DataIllegalException("Invalid symbol id");
+        
         return instrument;
     }
 

@@ -9,13 +9,12 @@ import java.net.InetSocketAddress;
 
 public class Server {
 
-
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
 		HttpServer server = null;
 		try {
-			server = HttpServer.create(new InetSocketAddress(9091), 0);
+			server = HttpServer.create(new InetSocketAddress(9092), 0);
 			
 			// add admin
 			StockMarket.getInstance().addNewCustomer(new Customer("1", "admin", "admin"));

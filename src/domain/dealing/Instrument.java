@@ -18,26 +18,37 @@ public class Instrument {
     public Instrument(String symbol,Long quantity) {
         this.symbol = symbol;
         this.quantity = quantity;
-        sellingOffers=new ArrayList<>();
+        sellingOffers = new ArrayList<>();
         buyingOffers = new ArrayList<>();
     }
 
-    public void executeSellingByType(PrintWriter out, SellingOffer offer){
+    public void executeSellingByType(PrintWriter out, SellingOffer offer){ 
+    	sellingOffers.add(offer);
+    	sortSellingOfferListByPrice();
+    	
+    	
         if(offer.typeIsMatched("GTC"))
             throw new RuntimeException("No Such Method");
         else if (offer.typeIsMatched("IOC"))
             throw new RuntimeException("No Such Method");
         else if( offer.typeIsMatched("MPO"))
             throw new RuntimeException("No Such Method");
+        else
+        	out.println("Invalid type");
     }
 
     public void executeBuyingByType(PrintWriter out, BuyingOffer offer){
+    	buyingOffers.add(offer);
+    	sortBuyingOfferListByPrice();
+    	
         if(offer.typeIsMatched("GTC"))
             throw new RuntimeException("No Such Method");
         else if (offer.typeIsMatched("IOC"))
             throw new RuntimeException("No Such Method");
         else if( offer.typeIsMatched("MPO"))
             throw new RuntimeException("No Such Method");
+        else
+        	out.println("Invalid type");
     }
 
     private void sortSellingOfferListByPrice(){
@@ -60,5 +71,18 @@ public class Instrument {
 
     public Boolean symbolIsMatched(String symbol){
         return this.symbol.equals(symbol);
+    }
+    
+    public Boolean HasQuantity(Long count){
+    	if(count <= this.quantity)
+    		return true;
+    	return false;
+    }
+    
+    public void changeQuantity(String type,Long count){
+    	if(type.equals("add"))
+    		this.quantity += count;
+    	else if(type.equals("delete") && HasQuantity(count))
+    		this.quantity -= count;
     }
 }

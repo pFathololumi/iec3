@@ -3,7 +3,7 @@ package domain;
 import domain.dealing.TransactionType;
 
 public class Account{
-	private long balance;
+	private Long balance;
 
 	public Account(){
 		executeTransaction(TransactionType.INITIAL, 0);

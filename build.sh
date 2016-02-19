@@ -1,7 +1,7 @@
-rm -rf bin/*
-javac -classpath ./lib/coolserver.jar ./src/Server/Server.java
-
-if [ $? -eq 0 ]; then
-    echo "Starting Server"
-    java -classpath ./bin:../lib/coolserver.jar CalcServer
-fi
+rm -rf ./bin/*
+find -name "*.java" > sources.txt
+javac -sourcepath src -d bin -classpath ./lib/coolserver.jar @sources.txt?
+echo Main-Class: server/Server > manifest.txt
+echo Class-Path: lib/coolserver.jar >> manifest.txt
+cd bin
+jar cvfm ../CA2.jar manifest.txt? *

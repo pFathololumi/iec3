@@ -37,4 +37,8 @@ public abstract class Offering {
     public Long getPrice() {
         return price;
     }
+    
+    public Long getQuantity(){
+    	return quantity;
+    }
 }

@@ -19,7 +19,7 @@ public class AddCustomer extends ServiceHandler{
         if (StockMarket.getInstance().containCustomer(id))
         	out.println("Repeated id");
         else{
-        	StockMarket.getInstance().addNewCustomer( new Customer(id, name, family));
+        	StockMarket.getInstance().addNewCustomer(new Customer(id, name, family));
         	out.println("New user is added");
         }
         //Page responsePage = new Page();

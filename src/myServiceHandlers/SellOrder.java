@@ -17,7 +17,9 @@ public class SellOrder extends ServiceHandler{
         Long price = Long.parseLong(params.get("price"));
         Long quantity = Long.parseLong(params.get("quantity"));
         String type = params.get("type");
+        
         SellingOffer sellingOffer = new SellingOffer(price,quantity,type,id);
+        
         try {
             if(instrument==null || instrument.isEmpty())
                 throw new DataIllegalException("Mismatched Parameters");
@@ -25,6 +27,7 @@ public class SellOrder extends ServiceHandler{
         } catch (DataIllegalException e) {
             out.println(e.getMessage());
         }
+        
         StockMarket.getInstance().executeSellingOffer(out,sellingOffer,instrument);
 
     }

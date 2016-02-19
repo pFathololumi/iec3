@@ -1,3 +1,7 @@
 /Client/
 /MyServiceHandlers/
 /Server/
+/domain/
+/exception/
+/myServiceHandlers/
+/server/
