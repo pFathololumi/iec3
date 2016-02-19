@@ -1,16 +1,31 @@
-package MyServiceHandlers;
+package myServiceHandlers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import server.StockMarket;
+import domain.dealing.BuyingOffer;
+import exception.DataIllegalException;
 import ir.ramtung.coolserver.ServiceHandler;
 
 public class BuyOrder extends ServiceHandler {
 
 	@Override
-	public void execute(PrintWriter arg0) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void execute(PrintWriter out) throws IOException {
+		String id = params.get("id");
+		String instrument = params.get("instrument");
+		Long price = Long.parseLong(params.get("price"));
+		Long quantity = Long.parseLong(params.get("quantity"));
+		String type = params.get("type");
+		BuyingOffer buyingOffer = new BuyingOffer(price,quantity,type,id);
+		try {
+			if(instrument==null || instrument.isEmpty())
+				throw new DataIllegalException("Mismatched Parameters");
+			buyingOffer.validateVariables();
+		} catch (DataIllegalException e) {
+			out.println(e.getMessage());
+		}
+		StockMarket.getInstance().executeBuyingOffer(out,buyingOffer,instrument);
 	}
 
 }

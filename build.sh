@@ -1,7 +1,7 @@
 rm -rf bin/*
-javac -sourcepath src -d bin src/ir/ramtung/coolserver/*.java
+javac -classpath ./lib/coolserver.jar ./src/Server/Server.java
 
 if [ $? -eq 0 ]; then
-    cd bin
-    jar cvf ../coolserver.jar *
+    echo "Starting Server"
+    java -classpath ./bin:../lib/coolserver.jar CalcServer
 fi
