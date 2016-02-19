@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class StockMarket {
     private static StockMarket stockMarket=null;
-    private List<Instrument> instruments;
-    private HashMap<String, Customer> customers;
+    private static List<Instrument> instruments;
+    private static HashMap<String, Customer> customers;
 
     private StockMarket(){
         instruments = new ArrayList<>();
@@ -74,7 +74,7 @@ public class StockMarket {
                 Instrument instrument = loadVerifiedParameters(offer, symbol);
                 
                 Customer customer = customers.get(offer.getID());
-                if(!customer.hasEnoughMoney(offer.getPrice())){
+                if(!customer.hasEnoughMoney(offer.getPrice() * offer.getQuantity())){
                 	out.println("Not enough money");
                 	return;
                 }
@@ -130,5 +130,25 @@ public class StockMarket {
             if( instrument.symbolIsMatched(inst))
                 return instrument;
         return null;
+    }
+    
+    public static void changeCustomerProperty(SellingOffer sOffer,BuyingOffer bOffer,Long price,Long count,String symbol){
+    	Customer seller = customers.get(sOffer.getID());
+    	Customer buyer = customers.get(bOffer.getID());
+    	
+    	seller.executeTransaction(TransactionType.DEPOSIT, price*count);
+    	seller.updateInstruments("delete", count, symbol);
+    	
+    	buyer.executeTransaction(TransactionType.WITHDRAW, price*count);
+    	boolean flag = false;
+    	for(Instrument i : instruments){
+			if(i.symbolIsMatched(symbol)){
+				i.changeQuantity("add", bOffer.getQuantity());
+				flag = true;
+				break;
+			}
+		}
+    	if(!flag)
+    		instruments.add(new Instrument(symbol, bOffer.getQuantity()));
     }
 }

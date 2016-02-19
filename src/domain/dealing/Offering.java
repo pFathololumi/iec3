@@ -41,4 +41,17 @@ public abstract class Offering {
     public Long getQuantity(){
     	return quantity;
     }
+    
+    public void setQuantity(String type,Long count){
+    	if(type.equals("add"))
+    		this.quantity += count;
+    	else if(type.equals("delete") && HasQuantity(count))
+    		this.quantity -= count;
+    }
+    
+    public Boolean HasQuantity(Long count){
+    	if(count <= this.quantity)
+    		return true;
+    	return false;
+    }
 }
