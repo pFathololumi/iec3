@@ -1,0 +1,12 @@
+Unknown Command
+Unknown Command
+Mismatched Parameters
+New user is added
+Repeated id
+Unknown user id
+Successful
+Unknown user id
+Not enough money
+Successful
+Mismatched Parameters
+Mismatched Parameters

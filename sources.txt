@@ -1,0 +1,17 @@
+./src/domain/Account.java
+./src/domain/Customer.java
+./src/domain/dealing/BuyingOffer.java
+./src/domain/dealing/Instrument.java
+./src/domain/dealing/Offering.java
+./src/domain/dealing/SellingOffer.java
+./src/domain/dealing/TransactionType.java
+./src/exception/DataIllegalException.java
+./src/myServiceHandlers/AddCustomer.java
+./src/myServiceHandlers/BuyOrder.java
+./src/myServiceHandlers/DepositHandler.java
+./src/myServiceHandlers/NotFoundHandler.java
+./src/myServiceHandlers/SellOrder.java
+./src/myServiceHandlers/WithdrawHandler.java
+./src/server/MyServiceHandler.java
+./src/server/Server.java
+./src/server/StockMarket.java

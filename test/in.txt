@@ -1,0 +1,12 @@
+127.0.0.1:9091/test
+http://127.0.0.1:9091/customer/a?id=123&name=ali&family=alavi
+http://127.0.0.1:9091/customer/add?name=ali&family=alavi
+http://127.0.0.1:9091/customer/add?id=12&name=ali&family=alavi
+http://127.0.0.1:9091/customer/add?id=12&name=ali&family=alavi
+http://127.0.0.1:9091/customer/deposit?id=123&amount=100
+http://127.0.0.1:9091/customer/deposit?id=12&amount=100
+http://127.0.0.1:9091/customer/withdraw?id=123&amount=200
+http://127.0.0.1:9091/customer/withdraw?id=12&amount=200
+http://127.0.0.1:9091/customer/withdraw?id=12&amount=50
+http://127.0.0.1:9091/customer/withdraw?amount=50
+http://127.0.0.1:9091/customer/deposit?id=12
