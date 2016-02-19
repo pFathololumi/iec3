@@ -43,5 +43,12 @@ public class Customer {
 		return false;
 	}
 
+	public void updateInstruments(String type,Long count,String name){
+		for(Instrument i : instruments){
+			if(i.symbolIsMatched(name)){
+				i.changeQuantity(type, count);
+			}
+		}
+	}
 }
 
