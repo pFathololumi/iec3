@@ -7,14 +7,20 @@ import server.*;
 import ir.ramtung.coolserver.ServiceHandler;
 import domain.dealing.TransactionType;
 
-public class WithdrawHandler extends ServiceHandler{
+public class WithdrawHandler extends MyServiceHandler{
 
 	@Override
-	public void execute(PrintWriter out) throws IOException {
-		// TODO Auto-generated method stub
+	public int executeByStatus(PrintWriter out) throws IOException {
 		String id = params.get("id");
-		Long amount = Long.parseLong(params.get("amount"));
-		
+		Long amount =null;
+		try{
+			amount= Long.parseLong(params.get("amount"));
+			if(id==null ||id.isEmpty())
+				throw new Exception();
+		}catch (Exception e){
+			out.println("Mismatched Parameters");
+			return 404;
+		}
 		if (StockMarket.getInstance().containCustomer(id)){
 			if(StockMarket.getInstance().customerHasEnoughMoney(id,amount)){
 				StockMarket.getInstance().executeFinancialTransaction(id, TransactionType.WITHDRAW,amount);
@@ -25,6 +31,7 @@ public class WithdrawHandler extends ServiceHandler{
 		}
 		else
 			out.println("Unknown user id");
+		return 200;
 	}
-	
+
 }

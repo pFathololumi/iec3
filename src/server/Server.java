@@ -24,8 +24,10 @@ public class Server {
 			server.createContext("/customer/withdraw", new WithdrawHandler());
 			server.createContext("/order/sell", new SellOrder());
 			server.createContext("/order/buy", new BuyOrder());
-			
+			server.createContext("/",new NotFoundHandler());
+
 			server.start();
+			System.out.println("Server is started.");
 		} catch (IOException e) {
 			System.out.println("Error Configuring Server");
 		}

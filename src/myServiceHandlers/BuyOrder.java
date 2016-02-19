@@ -3,15 +3,16 @@ package myServiceHandlers;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import server.MyServiceHandler;
 import server.StockMarket;
 import domain.dealing.BuyingOffer;
 import exception.DataIllegalException;
 import ir.ramtung.coolserver.ServiceHandler;
 
-public class BuyOrder extends ServiceHandler {
+public class BuyOrder extends MyServiceHandler {
 
 	@Override
-	public void execute(PrintWriter out) throws IOException {
+	public int executeByStatus(PrintWriter out) throws IOException {
 		String id = params.get("id");
 		String instrument = params.get("instrument");
 		Long price = Long.parseLong(params.get("price"));
@@ -24,8 +25,10 @@ public class BuyOrder extends ServiceHandler {
 			buyingOffer.validateVariables();
 		} catch (DataIllegalException e) {
 			out.println(e.getMessage());
+			return 404;
 		}
 		StockMarket.getInstance().executeBuyingOffer(out,buyingOffer,instrument);
+		return 200;
 	}
 
 }
