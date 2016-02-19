@@ -29,16 +29,15 @@ public class Instrument {
     		out.println("Invalid type");
     		return;
     	}
-    	
-    	sellingOffers.add(offer);
-    	sortSellingOfferListByPrice();
-    	SellingOffer minimumOffer = sellingOffers.get(0);
-    	BuyingOffer maximumOffer = buyingOffers.get(0);
-    	matchingOffers(minimumOffer, maximumOffer);
-    	
-    	
+
         if(offer.typeIsMatched("GTC"))
-            throw new RuntimeException("No Such Method");
+        {
+        	sellingOffers.add(offer);
+        	sortSellingOfferListByPrice();
+        	SellingOffer minimumOffer = sellingOffers.get(0);
+        	BuyingOffer maximumOffer = buyingOffers.get(0);
+        	matchingOffers(out,minimumOffer, maximumOffer);
+        }
         else if (offer.typeIsMatched("IOC"))
             throw new RuntimeException("No Such Method");
         else if( offer.typeIsMatched("MPO"))
@@ -51,15 +50,15 @@ public class Instrument {
     		out.println("Invalid type");
     		return;
     	}
-    	
-    	buyingOffers.add(offer);
-    	sortBuyingOfferListByPrice();
-    	SellingOffer minimumOffer = sellingOffers.get(0);
-    	BuyingOffer maximumOffer = buyingOffers.get(0);
-    	matchingOffers(minimumOffer, maximumOffer);
-    	
+
         if(offer.typeIsMatched("GTC"))
-            throw new RuntimeException("No Such Method");
+        {
+        	buyingOffers.add(offer);
+        	sortBuyingOfferListByPrice();
+        	SellingOffer minimumOffer = sellingOffers.get(0);
+        	BuyingOffer maximumOffer = buyingOffers.get(0);
+        	matchingOffers(out,minimumOffer, maximumOffer);
+        }
         else if (offer.typeIsMatched("IOC"))
             throw new RuntimeException("No Such Method");
         else if( offer.typeIsMatched("MPO"))
@@ -67,7 +66,7 @@ public class Instrument {
      
     }
     
-    public void matchingOffers(SellingOffer offer1,BuyingOffer offer2){  
+    public void matchingOffers(PrintWriter out,SellingOffer offer1,BuyingOffer offer2){  
     	if(offer1.getPrice() < offer2.getPrice()){
     		Long buyPrice = offer2.getPrice();
     		Long buyQuantity = (long) 0 ;
@@ -84,7 +83,10 @@ public class Instrument {
     			buyingOffers.set(0, offer2);
     		}
     		StockMarket.changeCustomerProperty(offer1, offer2, buyPrice, buyQuantity, symbol);
+    		out.println(offer1.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+offer2.getID());
     	}
+    	else
+    		out.println("Order is queued");
     }
 
     private void sortSellingOfferListByPrice(){
