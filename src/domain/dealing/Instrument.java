@@ -39,7 +39,37 @@ public class Instrument {
         	matchingOffers(out,minimumOffer, maximumOffer);
         }
         else if (offer.typeIsMatched("IOC"))
-            throw new RuntimeException("No Such Method");
+        {
+        	Long count = offer.getQuantity();
+        	for (int i = 0; i < buyingOffers.size(); i++) {
+				count -= buyingOffers.get(i).getQuantity();
+			}
+        	if(count > 0)
+        		out.println("Order is declined");
+        	else{
+        		count = offer.getQuantity();
+        		while(count > 0){
+        			if(offer.getPrice() < buyingOffers.get(0).getPrice()){
+        				Long buyPrice = buyingOffers.get(0).getPrice();
+        				Long buyQuantity = (long) 0 ;
+        				if(buyingOffers.get(0).getQuantity() < offer.getQuantity()){
+        					buyQuantity = offer.getQuantity() - buyingOffers.get(0).getQuantity();
+        					buyingOffers.remove(0);
+        					offer.setQuantity("delete", buyQuantity);
+        					sellingOffers.set(0, offer);
+        				}
+        				else{
+        					buyQuantity = buyingOffers.get(0).getQuantity() - offer.getQuantity();
+        					buyingOffers.get(0).setQuantity("delete", buyQuantity);
+        					buyingOffers.set(0, buyingOffers.get(0));
+        				}
+        				StockMarket.changeCustomerProperty(offer, buyingOffers.get(0), buyPrice, buyQuantity, symbol);
+        				out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+        			}
+        		}
+        	}
+        	
+        }
         else if( offer.typeIsMatched("MPO"))
             throw new RuntimeException("No Such Method");
         
@@ -60,7 +90,37 @@ public class Instrument {
         	matchingOffers(out,minimumOffer, maximumOffer);
         }
         else if (offer.typeIsMatched("IOC"))
-            throw new RuntimeException("No Such Method");
+        {
+        	Long count = offer.getQuantity();
+        	for (int i = 0; i < sellingOffers.size(); i++) {
+				count -= sellingOffers.get(i).getQuantity();
+			}
+        	if(count > 0)
+        		out.println("Order is declined");
+        	else{
+        		count = offer.getQuantity();
+        		while(count > 0){
+        			if(offer.getPrice() > sellingOffers.get(0).getPrice()){
+        				Long buyPrice = offer.getPrice();
+        				Long buyQuantity = (long) 0 ;
+        				if(offer.getQuantity() < sellingOffers.get(0).getQuantity()){
+        					buyQuantity = sellingOffers.get(0).getQuantity() - offer.getQuantity();
+        					sellingOffers.get(0).setQuantity("delete", buyQuantity);
+        					sellingOffers.set(0, sellingOffers.get(0));
+        				}
+        				else{
+        					buyQuantity = offer.getQuantity() - sellingOffers.get(0).getQuantity();
+        					sellingOffers.remove(0);
+        					offer.setQuantity("delete", buyQuantity);
+        					buyingOffers.set(0, offer);
+        				}
+        				StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
+        				out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+        			}
+        		}
+        	}
+        	
+        }
         else if( offer.typeIsMatched("MPO"))
             throw new RuntimeException("No Such Method");
      
