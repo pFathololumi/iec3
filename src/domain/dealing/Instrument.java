@@ -44,8 +44,10 @@ public class Instrument {
         	for (int i = 0; i < buyingOffers.size(); i++) {
 				count -= buyingOffers.get(i).getQuantity();
 			}
-        	if(count > 0)
+        	if(count > 0){
         		out.println("Order is declined");
+        		return;
+        	}
         	else{
         		count = offer.getQuantity();
         		while(count > 0){
@@ -71,7 +73,24 @@ public class Instrument {
         	
         }
         else if( offer.typeIsMatched("MPO"))
-            throw new RuntimeException("No Such Method");
+        {
+        	Long count = offer.getQuantity();
+        	for (int i = 0; i < buyingOffers.size(); i++) {
+				count -= buyingOffers.get(i).getQuantity();
+			}
+        	if(count > 0){
+        		out.println("Order is declined");
+        		return;
+        	}
+        	
+        	sellingOffers.add(offer);
+        	sortSellingOfferListByPrice();
+        	SellingOffer minimumOffer = sellingOffers.get(0);
+        	BuyingOffer maximumOffer = buyingOffers.get(0);
+        	if(minimumOffer.getPrice() == 0)
+        		minimumOffer.setPrice(maximumOffer.getPrice());
+        	matchingOffers(out,minimumOffer, maximumOffer);
+        }
         
     }
 
@@ -95,8 +114,10 @@ public class Instrument {
         	for (int i = 0; i < sellingOffers.size(); i++) {
 				count -= sellingOffers.get(i).getQuantity();
 			}
-        	if(count > 0)
+        	if(count > 0){
         		out.println("Order is declined");
+        		return;
+        	}
         	else{
         		count = offer.getQuantity();
         		while(count > 0){
@@ -122,7 +143,24 @@ public class Instrument {
         	
         }
         else if( offer.typeIsMatched("MPO"))
-            throw new RuntimeException("No Such Method");
+        {
+        	Long count = offer.getQuantity();
+        	for (int i = 0; i < sellingOffers.size(); i++) {
+				count -= sellingOffers.get(i).getQuantity();
+			}
+        	if(count > 0){
+        		out.println("Order is declined");
+        		return;
+        	}
+        	
+        	buyingOffers.add(offer);
+        	sortBuyingOfferListByPrice();
+        	SellingOffer minimumOffer = sellingOffers.get(0);
+        	BuyingOffer maximumOffer = buyingOffers.get(0);
+        	if(maximumOffer.getPrice() == 0)
+        		maximumOffer.setPrice(minimumOffer.getPrice());
+        	matchingOffers(out,minimumOffer, maximumOffer);
+        }
      
     }
     

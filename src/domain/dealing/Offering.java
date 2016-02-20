@@ -38,6 +38,10 @@ public abstract class Offering {
         return price;
     }
     
+    public void setPrice(Long p) {
+		this.price = p;
+	}
+    
     public Long getQuantity(){
     	return quantity;
     }
