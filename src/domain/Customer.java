@@ -30,6 +30,10 @@ public class Customer {
 		customerAccount.executeTransaction(type,amount);
 	}
 	
+	public Long getMoney(){
+		return this.customerAccount.getBalance();
+	}
+	
 	public Boolean hasEnoughMoney(Long amount){
 		return customerAccount.isEnoughMoney(amount);
 	}
