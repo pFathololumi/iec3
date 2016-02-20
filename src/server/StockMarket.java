@@ -48,17 +48,17 @@ public class StockMarket {
         try {
             if(offer.isAdminOffer())
                 addOrUpdateInstrumentByAdmin(out,symbol,offer);
-            else{
-                Instrument instrument = loadVerifiedParameters(offer,symbol);
-                
-                Customer customer = customers.get(offer.getID());
-                if(!customer.hasEnoughStock(symbol, offer)){
-                	out.println("Not enough share");
-                	return;
-                }
-                
-                instrument.executeSellingByType(out,offer);
+            
+            Instrument instrument = loadVerifiedParameters(offer,symbol);
+            
+            Customer customer = customers.get(offer.getID());
+            if(!customer.hasEnoughStock(symbol, offer)){
+            	out.println("Not enough share");
+            	return;
             }
+            
+            instrument.executeSellingByType(out,offer);
+            
 
         } catch (DataIllegalException e) {
             out.println(e.getMessage());
@@ -70,16 +70,16 @@ public class StockMarket {
         try {
             if(offer.isAdminOffer())
                 deleteOrUpdateInstrumentByAdmin(out,symbol,offer);
-            else {
-                Instrument instrument = loadVerifiedParameters(offer, symbol);
-                
-                Customer customer = customers.get(offer.getID());
-                if(!customer.hasEnoughMoney(offer.getPrice() * offer.getQuantity())){
-                	out.println("Not enough money");
-                	return;
-                }
-                instrument.executeBuyingByType(out, offer);
+           
+            Instrument instrument = loadVerifiedParameters(offer, symbol);
+            
+            Customer customer = customers.get(offer.getID());
+            if(!customer.hasEnoughMoney(offer.getPrice() * offer.getQuantity())){
+            	out.println("Not enough money");
+            	return;
             }
+            instrument.executeBuyingByType(out, offer);
+            
         } catch (DataIllegalException e) {
             out.println(e.getMessage());
             return;
