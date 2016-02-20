@@ -3,6 +3,7 @@ package myServiceHandlers;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import logger.MyLogger;
 import server.*;
 import domain.Customer;
 import ir.ramtung.coolserver.ServiceHandler;
@@ -20,11 +21,13 @@ public class AddCustomer extends MyServiceHandler{
 			out.println("Mismatched Parameters");
 			return 404;
 		}
-        if (StockMarket.getInstance().containCustomer(id))
-        	out.println("Repeated id");
-        else{
+        if (StockMarket.getInstance().containCustomer(id)) {
+			out.println("Repeated id");
+			MyLogger.info("ID '"+id+"' is repeated.");
+		}else{
         	StockMarket.getInstance().addNewCustomer(new Customer(id, name, family));
         	out.println("New user is added");
+			MyLogger.info("New User with id '"+id+"' is added");
         }
 
 		return 200;

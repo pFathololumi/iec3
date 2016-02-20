@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import logger.MyLogger;
 import server.StockMarket;
 
 /**
@@ -43,36 +44,11 @@ public class Instrument {
         }
         else if (offer.typeIsMatched("IOC"))
         {
-        	Long count = offer.getQuantity();
-        	for (int i = 0; i < buyingOffers.size(); i++) {
-				count -= buyingOffers.get(i).getQuantity();
+			if(buyingOffers.isEmpty()){
+				out.println("Order is declined");
+				return;
 			}
-        	if(count > 0){
-        		out.println("Order is declined");
-        		return;
-        	}
-        	else{
-        		count = offer.getQuantity();
-        		while(count > 0){
-        			if(offer.getPrice() < buyingOffers.get(0).getPrice()){
-        				Long buyPrice = buyingOffers.get(0).getPrice();
-        				Long buyQuantity = (long) 0 ;
-        				if(buyingOffers.get(0).getQuantity() < offer.getQuantity()){
-        					buyQuantity = offer.getQuantity() - buyingOffers.get(0).getQuantity();
-        					buyingOffers.remove(0);
-        					offer.setQuantity("delete", buyQuantity);
-        					sellingOffers.set(0, offer);
-        				}
-        				else{
-        					buyQuantity = buyingOffers.get(0).getQuantity() - offer.getQuantity();
-        					buyingOffers.get(0).setQuantity("delete", buyQuantity);
-        					buyingOffers.set(0, buyingOffers.get(0));
-        				}
-        				StockMarket.changeCustomerProperty(offer, buyingOffers.get(0), buyPrice, buyQuantity, symbol);
-        				out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
-        			}
-        		}
-        	}
+			sellingIOCtype(out, offer);
         	
         }
         else if( offer.typeIsMatched("MPO"))
@@ -85,19 +61,52 @@ public class Instrument {
         		out.println("Order is declined");
         		return;
         	}
-        	
-        	sellingOffers.add(offer);
+			offer.setPrice(0L);
+			sellingOffers.add(offer);
         	sortSellingOfferListByPrice();
-        	SellingOffer minimumOffer = sellingOffers.get(0);
-        	BuyingOffer maximumOffer = buyingOffers.get(0);
-        	if(minimumOffer.getPrice() == 0)
-        		minimumOffer.setPrice(maximumOffer.getPrice());
         	matchingOffers(out);
         }
         
     }
 
-    public void executeBuyingByType(PrintWriter out, BuyingOffer offer){
+	private void sellingIOCtype(PrintWriter out, SellingOffer offer) {
+		Long count = offer.getQuantity();
+		for (int i = 0; i < buyingOffers.size(); i++) {
+			if(buyingOffers.get(i).getPrice()<offer.getPrice())
+				break;
+            count -= buyingOffers.get(i).getQuantity();
+        }
+		if(count > 0){
+            out.println("Order is declined");
+            return;
+        }
+        else{
+            while(true){
+				Long buyPrice = buyingOffers.get(0).getPrice();
+				Long buyQuantity = 0L ;
+				if(buyingOffers.get(0).getQuantity() <= offer.getQuantity()){
+					buyQuantity = offer.getQuantity() - buyingOffers.get(0).getQuantity();
+					StockMarket.changeCustomerProperty(offer, buyingOffers.get(0), buyPrice, buyQuantity, symbol);
+					out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+					buyingOffers.remove(0);
+					offer.setQuantity("delete", buyQuantity);
+//					sellingOffers.set(0, offer);
+				}
+				else{
+					buyQuantity = buyingOffers.get(0).getQuantity() - offer.getQuantity();
+					buyingOffers.get(0).setQuantity("delete", buyQuantity);
+//					buyingOffers.set(0, buyingOffers.get(0));
+					StockMarket.changeCustomerProperty(offer, buyingOffers.get(0), buyPrice, buyQuantity, symbol);
+					out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+					break;
+				}
+
+
+            }
+        }
+	}
+
+	public void executeBuyingByType(PrintWriter out, BuyingOffer offer){
     	if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
     		out.println("Invalid type");
     		return;
@@ -116,37 +125,12 @@ public class Instrument {
         }
         else if (offer.typeIsMatched("IOC"))
         {
-        	Long count = offer.getQuantity();
-        	for (int i = 0; i < sellingOffers.size(); i++) {
-				count -= sellingOffers.get(i).getQuantity();
+			if(sellingOffers.isEmpty()){
+				out.println("Order is declined");
+				return;
 			}
-        	if(count > 0){
-        		out.println("Order is declined");
-        		return;
-        	}
-        	else{
-        		count = offer.getQuantity();
-        		while(count > 0){
-        			if(offer.getPrice() > sellingOffers.get(0).getPrice()){
-        				Long buyPrice = offer.getPrice();
-        				Long buyQuantity = (long) 0 ;
-        				if(offer.getQuantity() < sellingOffers.get(0).getQuantity()){
-        					buyQuantity = sellingOffers.get(0).getQuantity() - offer.getQuantity();
-        					sellingOffers.get(0).setQuantity("delete", buyQuantity);
-        					sellingOffers.set(0, sellingOffers.get(0));
-        				}
-        				else{
-        					buyQuantity = offer.getQuantity() - sellingOffers.get(0).getQuantity();
-        					sellingOffers.remove(0);
-        					offer.setQuantity("delete", buyQuantity);
-        					buyingOffers.set(0, offer);
-        				}
-        				StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
-        				out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
-        			}
-        		}
-        	}
-        	
+			buyingIOCtype(out, offer);
+
         }
         else if( offer.typeIsMatched("MPO"))
         {
@@ -158,19 +142,55 @@ public class Instrument {
         		out.println("Order is declined");
         		return;
         	}
-        	
+			offer.setPrice(Long.MAX_VALUE);
         	buyingOffers.add(offer);
         	sortBuyingOfferListByPrice();
-        	SellingOffer minimumOffer = sellingOffers.get(0);
-        	BuyingOffer maximumOffer = buyingOffers.get(0);
-        	if(maximumOffer.getPrice() == 0)
-        		maximumOffer.setPrice(minimumOffer.getPrice());
         	matchingOffers(out);
         }
-     
+
     }
-    
-    public void matchingOffers(PrintWriter out){
+
+	private void buyingIOCtype(PrintWriter out, BuyingOffer offer) {
+		Long count = offer.getQuantity();
+		for (int i = 0; i < sellingOffers.size(); i++) {
+			if(sellingOffers.get(i).getPrice()>offer.getPrice())
+				break;
+            count -= sellingOffers.get(i).getQuantity();
+        }
+		if(count > 0){
+            out.println("Order is declined");
+            return;
+        }
+        else{
+//            count = offer.getQuantity();
+            while(true){
+                if(offer.getPrice() > sellingOffers.get(0).getPrice()){
+                    Long buyPrice = offer.getPrice();
+                    Long buyQuantity = 0L ;
+                    if(offer.getQuantity() < sellingOffers.get(0).getQuantity()){
+                        buyQuantity = sellingOffers.get(0).getQuantity() - offer.getQuantity();
+                        sellingOffers.get(0).setQuantity("delete", buyQuantity);
+//                        sellingOffers.set(0, sellingOffers.get(0));
+						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
+						out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+						break;
+                    }
+                    else{
+                        buyQuantity = offer.getQuantity() - sellingOffers.get(0).getQuantity();
+						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
+						out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+						sellingOffers.remove(0);
+                        offer.setQuantity("delete", buyQuantity);
+//                        buyingOffers.set(0, offer);
+
+                    }
+
+                }
+            }
+        }
+	}
+
+	public void matchingOffers(PrintWriter out){
     	
     	SellingOffer sellingOffer = sellingOffers.get(0);
     	BuyingOffer buyingOffer = buyingOffers.get(0);
@@ -189,19 +209,28 @@ public class Instrument {
 	    			buyingOffers.remove(0);
 	    			sellingOffer.setQuantity("delete", buyQuantity);
 	    			sellingOffers.set(0, sellingOffer);
+					if(sellingOffer.getQuantity()==0L){
+						sellingOffers.remove(0);
+					}
 	    		}
 	    		else{
 	    			buyQuantity = buyingOffer.getQuantity() - sellingOffer.getQuantity();
 	    			sellingOffers.remove(0);
 	    			buyingOffer.setQuantity("delete", buyQuantity);
 	    			buyingOffers.set(0, buyingOffer);
+					if(buyingOffer.getQuantity()==0L){
+						buyingOffers.remove(0);
+					}
 	    		}
 	    		StockMarket.changeCustomerProperty(sellingOffer, buyingOffer, buyPrice, buyQuantity, symbol);
 	    		out.println(sellingOffer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffer.getID());
-	    	}
-	    	
-	    	sellingOffer = sellingOffers.get(0);
-	    	buyingOffer = buyingOffers.get(0);
+	    	}else
+				break;
+	    	if(!sellingOffers.isEmpty()&&!buyingOffers.isEmpty()) {
+				sellingOffer = sellingOffers.get(0);
+				buyingOffer = buyingOffers.get(0);
+			}else
+				break;
     	}
     }
 

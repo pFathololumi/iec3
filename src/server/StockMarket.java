@@ -3,6 +3,7 @@ package server;
 import domain.Customer;
 import domain.dealing.*;
 import exception.DataIllegalException;
+import logger.MyLogger;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -48,20 +49,20 @@ public class StockMarket {
         try {
             if(offer.isAdminOffer())
                 addOrUpdateInstrumentByAdmin(out,symbol,offer);
-            
-            Instrument instrument = loadVerifiedParameters(offer,symbol);
-            
-            Customer customer = customers.get(offer.getID());
-            if(!customer.hasEnoughStock(symbol, offer) && !offer.isAdminOffer()){
-            	out.println("Not enough share");
-            	return;
-            }
-            
-            instrument.executeSellingByType(out,offer);
-            
+                Instrument instrument = loadVerifiedParameters(offer,symbol);
+                
+                Customer customer = customers.get(offer.getID());
+                if(!customer.hasEnoughStock(symbol, offer) && !offer.isAdminOffer()){
+                	out.println("Not enough share");
+                    MyLogger.info("ID '"+offer.getID()+"' don't have enough share for symbol '"+symbol);
+                    return;
+                }
+                
+                instrument.executeSellingByType(out,offer);
 
         } catch (DataIllegalException e) {
             out.println(e.getMessage());
+            MyLogger.info(e.getMessage());
             return;
         }
     }
@@ -70,9 +71,9 @@ public class StockMarket {
         try {
             if(offer.isAdminOffer())
                 deleteOrUpdateInstrumentByAdmin(out,symbol,offer);
-           
+
             Instrument instrument = loadVerifiedParameters(offer, symbol);
-            
+
             Customer customer = customers.get(offer.getID());
             System.out.println(offer.getID()+"  "+customer.getId()+" "+customer.getMoney());
             if(!customer.hasEnoughMoney(offer.getPrice() * offer.getQuantity())){
@@ -80,7 +81,7 @@ public class StockMarket {
             	return;
             }
             instrument.executeBuyingByType(out, offer);
-            
+
         } catch (DataIllegalException e) {
             out.println(e.getMessage());
             return;
@@ -98,9 +99,6 @@ public class StockMarket {
 		}
     	if(!flag)
     		instruments.add(new Instrument(symbol, offer.getQuantity()));
-    	
-    	//Customer customer = customers.get(offer.getID());
-    	//customer.updateInstruments("add", offer.getQuantity(), symbol);
     }
     private void deleteOrUpdateInstrumentByAdmin(PrintWriter out,String symbol,Offering offer) {
     	for(Instrument i : instruments){
@@ -109,9 +107,6 @@ public class StockMarket {
 				return;
 			}
 		}
-    	
-    	//Customer customer = customers.get(offer.getID());
-    	//customer.updateInstruments("delete", offer.getQuantity(), symbol);
     }
 
     private Instrument loadVerifiedParameters(Offering offer, String symbol) throws DataIllegalException {

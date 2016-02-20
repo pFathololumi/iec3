@@ -3,6 +3,7 @@ package myServiceHandlers;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import logger.MyLogger;
 import server.*;
 import ir.ramtung.coolserver.ServiceHandler;
 import domain.dealing.TransactionType;
@@ -26,9 +27,12 @@ public class DepositHandler extends MyServiceHandler{
 		if (StockMarket.getInstance().containCustomer(id)){
 			StockMarket.getInstance().executeFinancialTransaction(id, TransactionType.DEPOSIT,amount);
 			out.println("Successful");
+			MyLogger.info("Deposit '"+amount+"' for user ID '"+id+"' ");
 		}
-		else
+		else {
 			out.println("Unknown user id");
+			MyLogger.info("Unknown user id '"+id+"'");
+		}
 		return 200;
 	}
 	

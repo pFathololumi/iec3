@@ -17,7 +17,7 @@ public abstract class Offering {
     }
 
     public void validateVariables() throws DataIllegalException{
-        if(price==null || quantity==null || type==null || type.isEmpty())
+        if(price==null ||price<0 || quantity==null ||quantity<0 || type==null || type.isEmpty())
             throw new DataIllegalException("Mismatched Parameters");
         validate();
     }
@@ -52,7 +52,11 @@ public abstract class Offering {
     	else if(type.equals("delete") && HasQuantity(count))
     		this.quantity -= count;
     }
-    
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
     public Boolean HasQuantity(Long count){
     	if(count <= this.quantity)
     		return true;

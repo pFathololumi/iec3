@@ -14,7 +14,7 @@ public class Server {
 		
 		HttpServer server = null;
 		try {
-			server = HttpServer.create(new InetSocketAddress(9098), 0);
+			server = HttpServer.create(new InetSocketAddress(9091), 0);
 			
 			// add admin
 			StockMarket.getInstance().addNewCustomer(new Customer("1", "admin", "admin"));

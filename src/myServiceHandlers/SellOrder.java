@@ -15,18 +15,20 @@ public class SellOrder extends MyServiceHandler {
 	public int executeByStatus(PrintWriter out) throws IOException {
 		String id = params.get("id");
         String instrument = params.get("instrument");
-        Long price = Long.parseLong(params.get("price"));
-        Long quantity = Long.parseLong(params.get("quantity"));
         String type = params.get("type");
-        
-        SellingOffer sellingOffer = new SellingOffer(price,quantity,type,id);
-        
+        SellingOffer sellingOffer=null;
         try {
+            Long price = Long.parseLong(params.get("price"));
+            Long quantity = Long.parseLong(params.get("quantity"));
+            sellingOffer = new SellingOffer(price,quantity,type,id);
             if(instrument==null || instrument.isEmpty())
                 throw new DataIllegalException("Mismatched Parameters");
             sellingOffer.validateVariables();
         } catch (DataIllegalException e) {
             out.println(e.getMessage());
+            return 404;
+        }catch (Exception e){
+            out.println("Mismatched Parameters");
             return 404;
         }
         

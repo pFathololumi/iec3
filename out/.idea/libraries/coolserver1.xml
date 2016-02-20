@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="coolserver1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/coolserver.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

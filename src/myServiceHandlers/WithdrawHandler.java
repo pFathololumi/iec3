@@ -3,6 +3,7 @@ package myServiceHandlers;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import logger.MyLogger;
 import server.*;
 import ir.ramtung.coolserver.ServiceHandler;
 import domain.dealing.TransactionType;
@@ -25,12 +26,17 @@ public class WithdrawHandler extends MyServiceHandler{
 			if(StockMarket.getInstance().customerHasEnoughMoney(id,amount)){
 				StockMarket.getInstance().executeFinancialTransaction(id, TransactionType.WITHDRAW,amount);
 				out.println("Successful");
+				MyLogger.info("Withdraw '"+amount+"' for user ID '"+id+"' ");
 			}
-			else
+			else {
 				out.println("Not enough money");
+				MyLogger.info("Not enough money for user id '"+id+"' for amount of '"+amount+"'");
+			}
 		}
-		else
+		else {
 			out.println("Unknown user id");
+			MyLogger.info("Unknown user id '"+id+"'");
+		}
 		return 200;
 	}
 

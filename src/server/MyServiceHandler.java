@@ -28,6 +28,7 @@ public abstract class MyServiceHandler extends ServiceHandler {
 
         StringWriter sw = new StringWriter();
         int status = executeByStatus(new PrintWriter(sw, true /*autoflush*/));
+        System.out.println("INFO:"+sw.toString());
         byte[] result = sw.toString().getBytes();
 
         t.sendResponseHeaders(status, result.length);
