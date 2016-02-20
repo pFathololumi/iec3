@@ -34,9 +34,12 @@ public class Instrument {
         {
         	sellingOffers.add(offer);
         	sortSellingOfferListByPrice();
-        	SellingOffer minimumOffer = sellingOffers.get(0);
-        	BuyingOffer maximumOffer = buyingOffers.get(0);
-        	matchingOffers(out,minimumOffer, maximumOffer);
+        	
+        	if(buyingOffers.isEmpty()){
+        		out.println("Order is queued");
+        		return;
+        	}
+        	matchingOffers(out);
         }
         else if (offer.typeIsMatched("IOC"))
         {
@@ -89,7 +92,7 @@ public class Instrument {
         	BuyingOffer maximumOffer = buyingOffers.get(0);
         	if(minimumOffer.getPrice() == 0)
         		minimumOffer.setPrice(maximumOffer.getPrice());
-        	matchingOffers(out,minimumOffer, maximumOffer);
+        	matchingOffers(out);
         }
         
     }
@@ -104,9 +107,12 @@ public class Instrument {
         {
         	buyingOffers.add(offer);
         	sortBuyingOfferListByPrice();
-        	SellingOffer minimumOffer = sellingOffers.get(0);
-        	BuyingOffer maximumOffer = buyingOffers.get(0);
-        	matchingOffers(out,minimumOffer, maximumOffer);
+        	if(sellingOffers.isEmpty()){
+        		out.println("Order is queued");
+        		return;
+        	}
+
+        	matchingOffers(out);
         }
         else if (offer.typeIsMatched("IOC"))
         {
@@ -159,32 +165,44 @@ public class Instrument {
         	BuyingOffer maximumOffer = buyingOffers.get(0);
         	if(maximumOffer.getPrice() == 0)
         		maximumOffer.setPrice(minimumOffer.getPrice());
-        	matchingOffers(out,minimumOffer, maximumOffer);
+        	matchingOffers(out);
         }
      
     }
     
-    public void matchingOffers(PrintWriter out,SellingOffer offer1,BuyingOffer offer2){  
-    	if(offer1.getPrice() < offer2.getPrice()){
-    		Long buyPrice = offer2.getPrice();
-    		Long buyQuantity = (long) 0 ;
-    		if(offer2.getQuantity() < offer1.getQuantity()){
-    			buyQuantity = offer1.getQuantity() - offer2.getQuantity();
-    			buyingOffers.remove(0);
-    			offer1.setQuantity("delete", buyQuantity);
-    			sellingOffers.set(0, offer1);
-    		}
-    		else{
-    			buyQuantity = offer2.getQuantity() - offer1.getQuantity();
-    			sellingOffers.remove(0);
-    			offer2.setQuantity("delete", buyQuantity);
-    			buyingOffers.set(0, offer2);
-    		}
-    		StockMarket.changeCustomerProperty(offer1, offer2, buyPrice, buyQuantity, symbol);
-    		out.println(offer1.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+offer2.getID());
-    	}
-    	else
+    public void matchingOffers(PrintWriter out){
+    	
+    	SellingOffer sellingOffer = sellingOffers.get(0);
+    	BuyingOffer buyingOffer = buyingOffers.get(0);
+    	
+    	if(sellingOffer.getPrice() > buyingOffer.getPrice()){
     		out.println("Order is queued");
+    		return;
+    	}
+    	
+    	while(true){	
+	    	if(sellingOffer.getPrice() <= buyingOffer.getPrice()){
+	    		Long buyPrice = buyingOffer.getPrice();
+	    		Long buyQuantity = (long) 0 ;
+	    		if(buyingOffer.getQuantity() < sellingOffer.getQuantity()){
+	    			buyQuantity = sellingOffer.getQuantity() - buyingOffer.getQuantity();
+	    			buyingOffers.remove(0);
+	    			sellingOffer.setQuantity("delete", buyQuantity);
+	    			sellingOffers.set(0, sellingOffer);
+	    		}
+	    		else{
+	    			buyQuantity = buyingOffer.getQuantity() - sellingOffer.getQuantity();
+	    			sellingOffers.remove(0);
+	    			buyingOffer.setQuantity("delete", buyQuantity);
+	    			buyingOffers.set(0, buyingOffer);
+	    		}
+	    		StockMarket.changeCustomerProperty(sellingOffer, buyingOffer, buyPrice, buyQuantity, symbol);
+	    		out.println(sellingOffer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffer.getID());
+	    	}
+	    	
+	    	sellingOffer = sellingOffers.get(0);
+	    	buyingOffer = buyingOffers.get(0);
+    	}
     }
 
     private void sortSellingOfferListByPrice(){
