@@ -52,7 +52,7 @@ public class StockMarket {
             Instrument instrument = loadVerifiedParameters(offer,symbol);
             
             Customer customer = customers.get(offer.getID());
-            if(!customer.hasEnoughStock(symbol, offer)){
+            if(!customer.hasEnoughStock(symbol, offer) && !offer.isAdminOffer()){
             	out.println("Not enough share");
             	return;
             }
@@ -74,6 +74,7 @@ public class StockMarket {
             Instrument instrument = loadVerifiedParameters(offer, symbol);
             
             Customer customer = customers.get(offer.getID());
+            System.out.println(offer.getID()+"  "+customer.getId()+" "+customer.getMoney());
             if(!customer.hasEnoughMoney(offer.getPrice() * offer.getQuantity())){
             	out.println("Not enough money");
             	return;
@@ -97,6 +98,9 @@ public class StockMarket {
 		}
     	if(!flag)
     		instruments.add(new Instrument(symbol, offer.getQuantity()));
+    	
+    	//Customer customer = customers.get(offer.getID());
+    	//customer.updateInstruments("add", offer.getQuantity(), symbol);
     }
     private void deleteOrUpdateInstrumentByAdmin(PrintWriter out,String symbol,Offering offer) {
     	for(Instrument i : instruments){
@@ -105,6 +109,9 @@ public class StockMarket {
 				return;
 			}
 		}
+    	
+    	//Customer customer = customers.get(offer.getID());
+    	//customer.updateInstruments("delete", offer.getQuantity(), symbol);
     }
 
     private Instrument loadVerifiedParameters(Offering offer, String symbol) throws DataIllegalException {
