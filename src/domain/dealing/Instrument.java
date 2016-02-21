@@ -40,7 +40,7 @@ public class Instrument {
         		out.println("Order is queued");
         		return;
         	}
-        	matchingOffers(out);
+        	matchingOffers(out,true);
         }
         else if (offer.typeIsMatched("IOC"))
         {
@@ -64,7 +64,7 @@ public class Instrument {
 			offer.setPrice(0L);
 			sellingOffers.add(offer);
         	sortSellingOfferListByPrice();
-        	matchingOffers(out);
+        	matchingOffers(out,true);
         }
         
     }
@@ -121,7 +121,7 @@ public class Instrument {
         		return;
         	}
 
-        	matchingOffers(out);
+        	matchingOffers(out,true);
         }
         else if (offer.typeIsMatched("IOC"))
         {
@@ -145,7 +145,7 @@ public class Instrument {
 			offer.setPrice(Long.MAX_VALUE);
         	buyingOffers.add(offer);
         	sortBuyingOfferListByPrice();
-        	matchingOffers(out);
+        	matchingOffers(out,false);
         }
 
     }
@@ -172,13 +172,13 @@ public class Instrument {
                         sellingOffers.get(0).setQuantity("delete", buyQuantity);
 //                        sellingOffers.set(0, sellingOffers.get(0));
 						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
-						out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+						out.println(sellingOffers.get(0).getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+offer.getID());
 						break;
                     }
                     else{
                         buyQuantity = offer.getQuantity() - sellingOffers.get(0).getQuantity();
 						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
-						out.println(offer.getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+						out.println(sellingOffers.get(0).getID()+" sold "+buyQuantity+" shares of "+this.symbol+" @"+buyPrice+" to "+offer.getID());
 						sellingOffers.remove(0);
                         offer.setQuantity("delete", buyQuantity);
 //                        buyingOffers.set(0, offer);
@@ -190,7 +190,7 @@ public class Instrument {
         }
 	}
 
-	public void matchingOffers(PrintWriter out){
+	public void matchingOffers(PrintWriter out,Boolean basedOnBuyerPrice){
     	
     	SellingOffer sellingOffer = sellingOffers.get(0);
     	BuyingOffer buyingOffer = buyingOffers.get(0);
@@ -202,7 +202,7 @@ public class Instrument {
     	
     	while(true){	
 	    	if(sellingOffer.getPrice() <= buyingOffer.getPrice()){
-	    		Long buyPrice = buyingOffer.getPrice();
+	    		Long buyPrice = basedOnBuyerPrice? buyingOffer.getPrice():sellingOffer.getPrice();
 	    		Long buyQuantity = (long) 0 ;
 	    		if(buyingOffer.getQuantity() < sellingOffer.getQuantity()){
 	    			buyQuantity = sellingOffer.getQuantity() - buyingOffer.getQuantity();

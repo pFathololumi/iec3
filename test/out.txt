@@ -10,4 +10,18 @@ Not enough money
 Successful
 Mismatched Parameters
 Mismatched Parameters
+
+//
+
+New user is added
 Successful
+Order is queued
+1 sold 50 shares of RENA1 @100 to 2
+Repeated id
+Not enough share
+Order is queued
+New user is added
+Successful
+Order is declined
+1 sold 50 shares of RENA1 @80 to 3
+2 sold 20 shares of RENA1 @80 to 3

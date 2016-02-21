@@ -48,10 +48,16 @@ public class Customer {
 	}
 
 	public void updateInstruments(String type,Long count,String name){
+		boolean flag = false;
 		for(Instrument i : instruments){
 			if(i.symbolIsMatched(name)){
 				i.changeQuantity(type, count);
+				flag = true;
+				break;
 			}
+		}
+		if(!flag){
+			instruments.add(new Instrument(name, count));
 		}
 	}
 }

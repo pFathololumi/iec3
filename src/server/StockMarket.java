@@ -69,17 +69,16 @@ public class StockMarket {
 
     public void executeBuyingOffer(PrintWriter out, BuyingOffer offer, String symbol){
         try {
+            Customer customer = customers.get(offer.getID());
+            if(!customer.hasEnoughMoney(offer.getPrice() * offer.getQuantity())){
+                out.println("Not enough money");
+                return;
+            }
             if(offer.isAdminOffer())
                 deleteOrUpdateInstrumentByAdmin(out,symbol,offer);
-
+            else
+                customer.executeTransaction(TransactionType.WITHDRAW, offer.getPrice()*offer.getQuantity());
             Instrument instrument = loadVerifiedParameters(offer, symbol);
-
-            Customer customer = customers.get(offer.getID());
-            System.out.println(offer.getID()+"  "+customer.getId()+" "+customer.getMoney());
-            if(!customer.hasEnoughMoney(offer.getPrice() * offer.getQuantity())){
-            	out.println("Not enough money");
-            	return;
-            }
             instrument.executeBuyingByType(out, offer);
 
         } catch (DataIllegalException e) {
@@ -133,24 +132,16 @@ public class StockMarket {
                 return instrument;
         return null;
     }
-    
+
     public static void changeCustomerProperty(SellingOffer sOffer,BuyingOffer bOffer,Long price,Long count,String symbol){
-    	Customer seller = customers.get(sOffer.getID());
-    	Customer buyer = customers.get(bOffer.getID());
-    	
-    	seller.executeTransaction(TransactionType.DEPOSIT, price*count);
-    	seller.updateInstruments("delete", count, symbol);
-    	
-    	buyer.executeTransaction(TransactionType.WITHDRAW, price*count);
-    	boolean flag = false;
-    	for(Instrument i : instruments){
-			if(i.symbolIsMatched(symbol)){
-				i.changeQuantity("add", bOffer.getQuantity());
-				flag = true;
-				break;
-			}
-		}
-    	if(!flag)
-    		instruments.add(new Instrument(symbol, bOffer.getQuantity()));
+        Customer seller = customers.get(sOffer.getID());
+        Customer buyer = customers.get(bOffer.getID());
+
+        seller.executeTransaction(TransactionType.DEPOSIT, price*count);
+        seller.updateInstruments("delete", count, symbol);
+
+//        buyer.executeTransaction(TransactionType.WITHDRAW, price*count);
+        buyer.updateInstruments("add", count, symbol);
+
     }
 }
