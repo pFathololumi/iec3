@@ -1,2 +1,0 @@
-Main-Class: server/Server
-Class-Path: lib/coolserver.jar
