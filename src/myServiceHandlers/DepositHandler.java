@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 
 import logger.MyLogger;
 import server.*;
-import ir.ramtung.coolserver.ServiceHandler;
 import domain.dealing.TransactionType;
 
 public class DepositHandler extends MyServiceHandler{

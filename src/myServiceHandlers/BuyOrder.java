@@ -7,7 +7,6 @@ import server.MyServiceHandler;
 import server.StockMarket;
 import domain.dealing.BuyingOffer;
 import exception.DataIllegalException;
-import ir.ramtung.coolserver.ServiceHandler;
 
 public class BuyOrder extends MyServiceHandler {
 

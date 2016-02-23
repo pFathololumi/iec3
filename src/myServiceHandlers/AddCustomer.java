@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import logger.MyLogger;
 import server.*;
 import domain.Customer;
-import ir.ramtung.coolserver.ServiceHandler;
 
 public class AddCustomer extends MyServiceHandler{
 	

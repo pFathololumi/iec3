@@ -18,7 +18,7 @@ Successful
 Order is queued
 1 sold 50 shares of RENA1 @100 to 2
 Repeated id
-Not enough share
+Order is queued
 Order is queued
 New user is added
 Successful
