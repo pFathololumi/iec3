@@ -1,2 +1,5 @@
 /domain/
+/exception/
+/logger/
+/myServiceHandlers/
 /server/

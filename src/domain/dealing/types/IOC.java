@@ -10,10 +10,10 @@ import server.StockMarket;
 public class IOC implements ITypeExecutor {
 
 	@Override
-	public UpdatedOfferingLists sellingExecute(PrintWriter out, SellingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers,String symbol) {
+	public void sellingExecute(PrintWriter out, SellingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers,String symbol) {
 		if(buyingOffers.isEmpty()){
 			out.println("Order is declined");
-			return null;
+			return;
 		}
 		Long count = offer.getQuantity();
 		for (int i = 0; i < buyingOffers.size(); i++) {
@@ -23,7 +23,7 @@ public class IOC implements ITypeExecutor {
 		}
 		if(count > 0){
 			out.println("Order is declined");
-			return null;
+			return;
 		}
 		else{
 			while(true){
@@ -49,14 +49,13 @@ public class IOC implements ITypeExecutor {
 
 			}
 		}
-		return new UpdatedOfferingLists(sellingOffers,buyingOffers);
 	}
 
 	@Override
-	public UpdatedOfferingLists buyingExecute(PrintWriter out, BuyingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers,String symbol) {
+	public void buyingExecute(PrintWriter out, BuyingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers,String symbol) {
 		if(sellingOffers.isEmpty()){
 			out.println("Order is declined");
-			return null;
+			return;
 		}
 		Long count = offer.getQuantity();
 		for (int i = 0; i < sellingOffers.size(); i++) {
@@ -66,7 +65,7 @@ public class IOC implements ITypeExecutor {
 		}
 		if(count > 0){
 			out.println("Order is declined");
-			return null;
+			return;
 		}
 		else{
 			//count = offer.getQuantity();
@@ -75,7 +74,7 @@ public class IOC implements ITypeExecutor {
 					Long buyPrice = offer.getPrice();
 					Long buyQuantity = 0L ;
 					if(offer.getQuantity() < sellingOffers.get(0).getQuantity()){
-						buyQuantity = sellingOffers.get(0).getQuantity() - offer.getQuantity();
+						buyQuantity = offer.getQuantity();
 						sellingOffers.get(0).setQuantity("delete", buyQuantity);
 						//sellingOffers.set(0, sellingOffers.get(0));
 						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
@@ -83,7 +82,7 @@ public class IOC implements ITypeExecutor {
 						break;
 					}
 					else{
-						buyQuantity = offer.getQuantity() - sellingOffers.get(0).getQuantity();
+						buyQuantity = sellingOffers.get(0).getQuantity();
 						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
 						out.println(sellingOffers.get(0).getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+offer.getID());
 						sellingOffers.remove(0);
@@ -95,6 +94,5 @@ public class IOC implements ITypeExecutor {
 				}
 			}
 		}
-		return new UpdatedOfferingLists(sellingOffers,buyingOffers);
 	}
 }

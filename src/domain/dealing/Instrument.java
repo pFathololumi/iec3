@@ -26,7 +26,8 @@ public class Instrument {
         this.buyingOffers = new ArrayList<>();
     }
 
-    public void executeSellingByType(PrintWriter out, SellingOffer offer){ 
+    public void executeSellingByType(PrintWriter out, SellingOffer offer){
+
     	if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
     		out.println("Invalid type");
     		return;
@@ -35,7 +36,7 @@ public class Instrument {
         if(offer.typeIsMatched("GTC"))
         {
         	GTC gtcSell = new GTC();
-        	gtcSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
+			gtcSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
         }
         else if (offer.typeIsMatched("IOC"))
         {
@@ -52,13 +53,22 @@ public class Instrument {
     }
 
 	public void executeBuyingByType(PrintWriter out, BuyingOffer offer){
-    	if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
+		try {
+			Class t = Class.forName(offer.getType());
+
+		}catch (ClassNotFoundException ex){
+			out.println("Invalid type");
+			return;
+		}
+
+		if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
     		out.println("Invalid type");
     		return;
     	}
 
         if(offer.typeIsMatched("GTC"))
         {
+
         	GTC gtcBuy = new GTC();
         	gtcBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
         }
@@ -93,7 +103,7 @@ public class Instrument {
 	    		Long buyPrice = basedOnBuyerPrice? buyingOffer.getPrice():sellingOffer.getPrice();
 	    		Long buyQuantity = (long) 0 ;
 	    		if(buyingOffer.getQuantity() < sellingOffer.getQuantity()){
-	    			buyQuantity = sellingOffer.getQuantity() - buyingOffer.getQuantity();
+	    			buyQuantity = buyingOffer.getQuantity();
 	    			buyingOffers.remove(0);
 	    			sellingOffer.setQuantity("delete", buyQuantity);
 	    			sellingOffers.set(0, sellingOffer);
@@ -102,7 +112,7 @@ public class Instrument {
 					}
 	    		}
 	    		else{
-	    			buyQuantity = buyingOffer.getQuantity() - sellingOffer.getQuantity();
+	    			buyQuantity = sellingOffer.getQuantity();
 	    			sellingOffers.remove(0);
 	    			buyingOffer.setQuantity("delete", buyQuantity);
 	    			buyingOffers.set(0, buyingOffer);

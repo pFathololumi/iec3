@@ -20,6 +20,8 @@ public abstract class MyServiceHandler extends ServiceHandler {
 
     }
 
+    public int executePostRequest(PrintWriter printWriter,HttpExchange t){return 0;};
+
     public abstract int executeByStatus(PrintWriter printWriter) throws IOException;
 
     @Override
@@ -27,7 +29,11 @@ public abstract class MyServiceHandler extends ServiceHandler {
         extractParams(t.getRequestURI().getQuery());
 
         StringWriter sw = new StringWriter();
-        int status = executeByStatus(new PrintWriter(sw, true /*autoflush*/));
+        int status;
+        if(t.getRequestMethod().equals("POST"))
+            status=executePostRequest(new PrintWriter(sw, true /*autoflush*/),t);
+        else
+            status=executeByStatus(new PrintWriter(sw, true /*autoflush*/));
         System.out.println("INFO:"+sw.toString());
         byte[] result = sw.toString().getBytes();
 

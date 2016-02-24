@@ -14,7 +14,7 @@ public class Server {
 		
 		HttpServer server = null;
 		try {
-			server = HttpServer.create(new InetSocketAddress(9092), 0);
+			server = HttpServer.create(new InetSocketAddress(9091), 0);
 			
 			// add admin
 			StockMarket.getInstance().addNewCustomer(new Customer("1", "admin", "admin"));
@@ -24,6 +24,7 @@ public class Server {
 			server.createContext("/customer/withdraw", new WithdrawHandler());
 			server.createContext("/order/sell", new SellOrder());
 			server.createContext("/order/buy", new BuyOrder());
+			server.createContext("/config/uploadzip", new UploadZipFile());
 			server.createContext("/",new NotFoundHandler());
 
 			server.start();

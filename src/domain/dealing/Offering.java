@@ -10,6 +10,10 @@ public abstract class Offering {
     private Long quantity;
     private String type;
 
+    public String getType() {
+        return type;
+    }
+
     public Offering(Long price, Long quantity, String type) {
         this.price = price;
         this.quantity = quantity;
