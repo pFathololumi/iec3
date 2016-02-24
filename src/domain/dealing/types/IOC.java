@@ -30,19 +30,19 @@ public class IOC implements ITypeExecutor {
 				Long buyPrice = buyingOffers.get(0).getPrice();
 				Long buyQuantity = 0L ;
 				if(buyingOffers.get(0).getQuantity() <= offer.getQuantity()){
-					buyQuantity = offer.getQuantity() - buyingOffers.get(0).getQuantity();
+					buyQuantity = buyingOffers.get(0).getQuantity();
 					StockMarket.changeCustomerProperty(offer, buyingOffers.get(0), buyPrice, buyQuantity, symbol);
-					out.println(offer.getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+					out.println(offer.getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID()+"\n");
 					buyingOffers.remove(0);
 					offer.setQuantity("delete", buyQuantity);
 					//sellingOffers.set(0, offer);
 				}
 				else{
-					buyQuantity = buyingOffers.get(0).getQuantity() - offer.getQuantity();
+					buyQuantity = offer.getQuantity();
 					buyingOffers.get(0).setQuantity("delete", buyQuantity);
 					//buyingOffers.set(0, buyingOffers.get(0));
 					StockMarket.changeCustomerProperty(offer, buyingOffers.get(0), buyPrice, buyQuantity, symbol);
-					out.println(offer.getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID());
+					out.println(offer.getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+buyingOffers.get(0).getID()+"\n");
 					break;
 				}
 
@@ -79,13 +79,13 @@ public class IOC implements ITypeExecutor {
 						sellingOffers.get(0).setQuantity("delete", buyQuantity);
 						//sellingOffers.set(0, sellingOffers.get(0));
 						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
-						out.println(sellingOffers.get(0).getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+offer.getID());
+						out.println(sellingOffers.get(0).getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+offer.getID()+"\n");
 						break;
 					}
 					else{
 						buyQuantity = offer.getQuantity() - sellingOffers.get(0).getQuantity();
 						StockMarket.changeCustomerProperty(sellingOffers.get(0), offer, buyPrice, buyQuantity, symbol);
-						out.println(sellingOffers.get(0).getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+offer.getID());
+						out.println(sellingOffers.get(0).getID()+" sold "+buyQuantity+" shares of "+symbol+" @"+buyPrice+" to "+offer.getID()+"\n");
 						sellingOffers.remove(0);
 						offer.setQuantity("delete", buyQuantity);
 						//buyingOffers.set(0, offer);
