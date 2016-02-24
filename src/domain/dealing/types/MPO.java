@@ -7,42 +7,40 @@ import domain.dealing.BuyingOffer;
 import domain.dealing.Instrument;
 import domain.dealing.SellingOffer;
 
-public class MPO implements TypeExecutor{
+public class MPO implements ITypeExecutor {
 
 	@Override
-	public void sellingExecute(PrintWriter out, SellingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers) {
-		// TODO Auto-generated method stub
+	public UpdatedOfferingLists sellingExecute(PrintWriter out, SellingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers,String symbol) {
 		Long count = offer.getQuantity();
     	for (int i = 0; i < buyingOffers.size(); i++) {
 			count -= buyingOffers.get(i).getQuantity();
 		}
     	if(count > 0){
     		out.println("Order is declined");
-    		return;
+    		return null;
     	}
 		offer.setPrice(0L);
 		sellingOffers.add(offer);
-    	Instrument.sortSellingOfferListByPrice();
-    	Instrument.matchingOffers(out,true);
-		
+    	Instrument.sortOfferingListByPrice(sellingOffers);
+    	Instrument.matchingOffers(out,true,sellingOffers,buyingOffers,symbol);
+		return new UpdatedOfferingLists(sellingOffers,buyingOffers);
 	}
 
 	@Override
-	public void buyingExecute(PrintWriter out, BuyingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers) {
-		// TODO Auto-generated method stub
+	public UpdatedOfferingLists buyingExecute(PrintWriter out, BuyingOffer offer, List<SellingOffer> sellingOffers, List<BuyingOffer> buyingOffers,String symbol) {
 		Long count = offer.getQuantity();
     	for (int i = 0; i < sellingOffers.size(); i++) {
 			count -= sellingOffers.get(i).getQuantity();
 		}
     	if(count > 0){
     		out.println("Order is declined");
-    		return;
+    		return null;
     	}
 		offer.setPrice(Long.MAX_VALUE);
     	buyingOffers.add(offer);
-    	Instrument.sortBuyingOfferListByPrice();
-    	Instrument.matchingOffers(out,false);
-		
+    	Instrument.sortOfferingListByPrice(buyingOffers);
+    	Instrument.matchingOffers(out,false,sellingOffers,buyingOffers,symbol);
+		return new UpdatedOfferingLists(sellingOffers,buyingOffers);
 	}
 
 }

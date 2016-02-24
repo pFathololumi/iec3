@@ -13,10 +13,10 @@ import server.StockMarket;
  * Created by Hamed Ara on 2/18/2016.
  */
 public class Instrument {
-    private static String symbol;
+    private String symbol;
     private Long quantity;
-    private static List<SellingOffer> sellingOffers;
-    private static List<BuyingOffer> buyingOffers;
+    private List<SellingOffer> sellingOffers;
+    private List<BuyingOffer> buyingOffers;
 
     @SuppressWarnings("static-access")
 	public Instrument(String symbol,Long quantity) {
@@ -35,18 +35,18 @@ public class Instrument {
         if(offer.typeIsMatched("GTC"))
         {
         	GTC gtcSell = new GTC();
-        	gtcSell.sellingExecute(out, offer, sellingOffers, buyingOffers);
+        	gtcSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
         }
         else if (offer.typeIsMatched("IOC"))
         {
-			IOC iocSell = new IOC(symbol);
-			iocSell.sellingExecute(out, offer, sellingOffers, buyingOffers);
+			IOC iocSell = new IOC();
+			iocSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
         	
         }
         else if( offer.typeIsMatched("MPO"))
         {
         	MPO mpoSell = new MPO();
-        	mpoSell.sellingExecute(out, offer, sellingOffers, buyingOffers);
+        	mpoSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
         }
         
     }
@@ -60,34 +60,35 @@ public class Instrument {
         if(offer.typeIsMatched("GTC"))
         {
         	GTC gtcBuy = new GTC();
-        	gtcBuy.buyingExecute(out, offer, sellingOffers, buyingOffers);
+        	gtcBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
         }
         else if (offer.typeIsMatched("IOC"))
         {
-			IOC iocBuy = new IOC(symbol);
-			iocBuy.buyingExecute(out, offer, sellingOffers, buyingOffers);
+			IOC iocBuy = new IOC();
+			iocBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
 
         }
         else if( offer.typeIsMatched("MPO"))
         {
         	MPO mpoBuy = new MPO();
-        	mpoBuy.buyingExecute(out, offer, sellingOffers, buyingOffers);
+        	mpoBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
         }
 
     }
-	
 
-	public static void matchingOffers(PrintWriter out,Boolean basedOnBuyerPrice){
-    	
+
+	public static void matchingOffers(PrintWriter out,Boolean basedOnBuyerPrice,
+			List<SellingOffer> sellingOffers,List<BuyingOffer>buyingOffers,String symbol){
+
     	SellingOffer sellingOffer = sellingOffers.get(0);
     	BuyingOffer buyingOffer = buyingOffers.get(0);
-    	
+
     	if(sellingOffer.getPrice() > buyingOffer.getPrice()){
     		out.println("Order is queued");
     		return;
     	}
-    	
-    	while(true){	
+
+    	while(true){
 	    	if(sellingOffer.getPrice() <= buyingOffer.getPrice()){
 	    		Long buyPrice = basedOnBuyerPrice? buyingOffer.getPrice():sellingOffer.getPrice();
 	    		Long buyQuantity = (long) 0 ;
@@ -121,23 +122,16 @@ public class Instrument {
     	}
     }
 
-    public static void sortSellingOfferListByPrice(){
-        Collections.sort(sellingOffers, new Comparator<SellingOffer>() {
+    public static void sortOfferingListByPrice(List<? extends Offering> offers){
+        Collections.sort(offers, new Comparator<Offering>() {
             @Override
-            public int compare(SellingOffer o1, SellingOffer o2) {
+            public int compare(Offering o1, Offering o2) {
                 return o1.getPrice()>o2.getPrice()?1:-1;
             }
         });
+//		return offers;
     }
 
-    public static void sortBuyingOfferListByPrice(){
-        Collections.sort(buyingOffers, new Comparator<BuyingOffer>() {
-            @Override
-            public int compare(BuyingOffer o1, BuyingOffer o2) {
-                return o1.getPrice() < o2.getPrice() ? 1 : -1;
-            }
-        });
-    }
 
     public Boolean symbolIsMatched(String symbol){
         return symbol.equals(symbol);
