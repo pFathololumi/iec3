@@ -1,4 +1,4 @@
-
+package test;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -16,12 +16,13 @@ public class Test {
 	private final String USER_AGENT = "Mozilla/5.0";
 
 	public static void main(String[] args) throws Exception {
-
+		File output = new File("test/out2.txt");
+		if( output.exists() )
+			output.delete();
 		Test http = new Test();
 		String url = "";
 		int i = 1;
-
-		Scanner input = new Scanner(new File("C:\\Users\\parisa\\git\\ieca3\\test\\in.txt"));
+		Scanner input = new Scanner(new File("test/in.txt"));
 		
 		while(input.hasNextLine()){
 			url = input.nextLine();
@@ -52,7 +53,6 @@ public class Test {
 		int responseCode = con.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
-
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(con.getInputStream()));
 		String inputLine;
@@ -67,7 +67,7 @@ public class Test {
 		System.out.println(response.toString());
 
 		
-		PrintWriter output = new PrintWriter(new FileOutputStream("C:\\Users\\parisa\\git\\ieca3\\test\\out2.txt",true));
+		PrintWriter output = new PrintWriter(new FileOutputStream("test/out2.txt",true));
 		
 		output.println(response.toString());
 		output.close();

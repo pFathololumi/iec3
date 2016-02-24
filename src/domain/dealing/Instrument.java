@@ -1,6 +1,7 @@
 package domain.dealing;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,62 +28,86 @@ public class Instrument {
     }
 
     public void executeSellingByType(PrintWriter out, SellingOffer offer){
-
-    	if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
-    		out.println("Invalid type");
-    		return;
-    	}
-
-        if(offer.typeIsMatched("GTC"))
-        {
-        	GTC gtcSell = new GTC();
-			gtcSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
-        }
-        else if (offer.typeIsMatched("IOC"))
-        {
-			IOC iocSell = new IOC();
-			iocSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
-        	
-        }
-        else if( offer.typeIsMatched("MPO"))
-        {
-        	MPO mpoSell = new MPO();
-        	mpoSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
-        }
+		try {
+			Class clazz = Class.forName("domain.dealing.types."+offer.getType());
+			Object obj= clazz.newInstance();
+			if(obj instanceof ITypeExecutor){
+				((ITypeExecutor)obj).sellingExecute(out,offer,sellingOffers,buyingOffers,symbol);
+			}
+		}catch (ClassNotFoundException ex){
+			out.println("Invalid type");
+			return;
+		}catch (IllegalAccessException ex){
+			out.println("Invalid type");
+			return;
+		}catch (InstantiationException ex){
+			out.println("Invalid type");
+			return;
+		}
+//    	if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
+//    		out.println("Invalid type");
+//    		return;
+//    	}
+//
+//        if(offer.typeIsMatched("GTC"))
+//        {
+//        	GTC gtcSell = new GTC();
+//			gtcSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
+//        }
+//        else if (offer.typeIsMatched("IOC"))
+//        {
+//			IOC iocSell = new IOC();
+//			iocSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
+//
+//        }
+//        else if( offer.typeIsMatched("MPO"))
+//        {
+//        	MPO mpoSell = new MPO();
+//        	mpoSell.sellingExecute(out, offer, sellingOffers, buyingOffers,symbol);
+//        }
         
     }
 
 	public void executeBuyingByType(PrintWriter out, BuyingOffer offer){
 		try {
-			Class t = Class.forName(offer.getType());
-
+			Class clazz = Class.forName("domain.dealing.types."+offer.getType());
+			Object obj= clazz.newInstance();
+			if(obj instanceof ITypeExecutor){
+				((ITypeExecutor)obj).buyingExecute(out,offer,sellingOffers,buyingOffers,symbol);
+			}
 		}catch (ClassNotFoundException ex){
+			out.println("Invalid type");
+			return;
+		}catch (IllegalAccessException ex){
+			out.println("Invalid type");
+			return;
+		}catch (InstantiationException ex){
 			out.println("Invalid type");
 			return;
 		}
 
-		if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
-    		out.println("Invalid type");
-    		return;
-    	}
-
-        if(offer.typeIsMatched("GTC"))
-        {
-
-        	GTC gtcBuy = new GTC();
-        	gtcBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
-        }
-        else if (offer.typeIsMatched("IOC"))
-        {
-			IOC iocBuy = new IOC();
-			iocBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
-
-        }
-        else if( offer.typeIsMatched("MPO"))
-        {
-        	MPO mpoBuy = new MPO();
-        	mpoBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
-        }
+//		if(!(offer.typeIsMatched("GTC") || offer.typeIsMatched("IOC") || offer.typeIsMatched("MPO"))){
+//    		out.println("Invalid type");
+//    		return;
+//    	}
+//
+//        if(offer.typeIsMatched("GTC"))
+//        {
+//
+//        	GTC gtcBuy = new GTC();
+//        	gtcBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
+//        }
+//        else if (offer.typeIsMatched("IOC"))
+//        {
+//			IOC iocBuy = new IOC();
+//			iocBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
+//
+//        }
+//        else if( offer.typeIsMatched("MPO"))
+//        {
+//        	MPO mpoBuy = new MPO();
+//        	mpoBuy.buyingExecute(out, offer, sellingOffers, buyingOffers,symbol);
+//        }
 
     }
 
